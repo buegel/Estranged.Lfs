@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>4.0.0</Version>
+    <TargetFramework>net6.0</TargetFramework>
+    <Authors>alanedwardes</Authors>
+    <Description>A GitLab authentication adapter for Estranged.Lfs.Api.</Description>
+    <PackageId>Estranged.Lfs.Authenticator.GitLab</PackageId>
+    <PackageProjectUrl>https://github.com/alanedwardes/Estranged.Lfs</PackageProjectUrl>
+    <PackageTags>git lfs s3</PackageTags>
+    <AssemblyName>Estranged.Lfs.Authenticator.GitLab</AssemblyName>
+    <RootNamespace>Estranged.Lfs.Authenticator.GitLab</RootNamespace>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Estranged.Lfs.Data\Estranged.Lfs.Data.csproj" />
+  </ItemGroup>
+
+</Project>

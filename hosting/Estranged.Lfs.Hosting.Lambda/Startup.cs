@@ -7,6 +7,7 @@ using Estranged.Lfs.Adapter.S3;
 using Estranged.Lfs.Api;
 using Estranged.Lfs.Authenticator.BitBucket;
 using Estranged.Lfs.Authenticator.GitHub;
+using Estranged.Lfs.Authenticator.GitLab;
 using Estranged.Lfs.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +25,8 @@ namespace Estranged.Lfs.Hosting.Lambda
             const string LfsPasswordVariable = "LFS_PASSWORD";
             const string GitHubOrganisationVariable = "GITHUB_ORGANISATION";
             const string GitHubRepositoryVariable = "GITHUB_REPOSITORY";
+            const string GitLabOrganisationVariable = "GITLAB_ORGANISATION";
+            const string GitLabRepositoryVariable = "GITLAB_REPOSITORY";
             const string BitBucketWorkspaceVariable = "BITBUCKET_WORKSPACE";
             const string BitBucketRepositoryVariable = "BITBUCKET_REPOSITORY";
             const string S3AccelerationVariable = "S3_ACCELERATION";
@@ -40,6 +43,8 @@ namespace Estranged.Lfs.Hosting.Lambda
             string lfsPassword = config[LfsPasswordVariable];
             string gitHubOrganisation = config[GitHubOrganisationVariable];
             string gitHubRepository = config[GitHubRepositoryVariable];
+            string gitLabOrganisation = config[GitLabOrganisationVariable];
+            string gitLabRepository = config[GitLabRepositoryVariable];
             string bitBucketWorkspace = config[BitBucketWorkspaceVariable];
             string bitBucketRepository = config[BitBucketRepositoryVariable];
             bool s3Acceleration = bool.Parse(config[S3AccelerationVariable] ?? "false");
@@ -48,10 +53,11 @@ namespace Estranged.Lfs.Hosting.Lambda
             bool isAzureStorage = !string.IsNullOrWhiteSpace(lfsAzureStorageConnectionString);
             bool isDictionaryAuthentication = !string.IsNullOrWhiteSpace(lfsUsername) && !string.IsNullOrWhiteSpace(lfsPassword);
             bool isGitHubAuthentication = !string.IsNullOrWhiteSpace(gitHubOrganisation) && !string.IsNullOrWhiteSpace(gitHubRepository);
+            bool isGitLabAuthentication = !string.IsNullOrWhiteSpace(gitLabOrganisation) && !string.IsNullOrWhiteSpace(gitLabRepository);
             bool isBitBucketAuthentication = !string.IsNullOrWhiteSpace(bitBucketWorkspace) && !string.IsNullOrWhiteSpace(bitBucketRepository);
 
             // If all authentication mechanims are set, or none are set throw an error
-            if (new[] {isDictionaryAuthentication, isGitHubAuthentication, isBitBucketAuthentication}.Count(x => x) != 1)
+            if (new[] {isDictionaryAuthentication, isGitHubAuthentication, isGitLabAuthentication, isBitBucketAuthentication}.Count(x => x) != 1)
             {
                 throw new InvalidOperationException($"Unable to detect authentication mechanism. Please set {LfsUsernameVariable} and {LfsPasswordVariable} for simple user/password auth" +
                                                     $" or {GitHubOrganisationVariable} and {GitHubRepositoryVariable} for authentication against that repository on GitHub");
@@ -65,6 +71,11 @@ namespace Estranged.Lfs.Hosting.Lambda
             if (isGitHubAuthentication)
             {
                 services.AddLfsGitHubAuthenticator(new GitHubAuthenticatorConfig { Organisation = gitHubOrganisation, Repository = gitHubRepository });
+            }
+
+            if (isGitLabAuthentication)
+            {
+                services.AddLfsGitLabAuthenticator(new GitLabAuthenticatorConfig { Organisation = gitLabOrganisation, Repository = gitLabRepository });
             }
 
             if (isBitBucketAuthentication)
