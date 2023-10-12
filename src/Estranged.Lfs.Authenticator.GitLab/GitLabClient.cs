@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.Net.Http;
+﻿using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -15,26 +15,21 @@ namespace Estranged.Lfs.Authenticator.GitLab
             this.httpClient = httpClient;
         }
 
-       // this could be removed?
-       public async Task<string> GetRepositoryPermissions(string organisation, string repository, CancellationToken token)
+        public async Task<string> GetRepository(string access_token, string repository, CancellationToken token)
         {
-            var response = await httpClient.GetAsync($"/2.0/user/permissions/repositories?q=repository.full_name=\"{HttpUtility.UrlEncode(organisation)}/{HttpUtility.UrlEncode(repository)}\"", token);
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<string>(await response.Content.ReadAsStringAsync());
-        }
-
-        public async Task<string> GetRepository(string organisation, string repository, CancellationToken token)
-        {
-            // var response = await httpClient.GetAsync($"/v4/projects/{HttpUtility.UrlEncode(organisation)}/{HttpUtility.UrlEncode(repository)}", token);
-
-            // next try, this actually works, add token and ID with config
-            var request = new HttpRequestMessage(new HttpMethod("GET"), "https://gitlab.com/api/v4/projects/48255045");
-            request.Headers.TryAddWithoutValidation("PRIVATE-TOKEN", "token"); 
+            // Create request, maybe move base address to authenticator config
+            var request = new HttpRequestMessage(new HttpMethod("GET"), $"https://gitlab.com/api/v4/projects/{HttpUtility.UrlEncode(repository)}");
+            request.Headers.TryAddWithoutValidation("PRIVATE-TOKEN", access_token); 
+            
+            // Send request
             var response = await httpClient.SendAsync(request);
-
-            // var response = await httpClient.GetAsync($"/projects/48255045", token);
+            
+            // Check if request was successful
             response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<string>(await response.Content.ReadAsStringAsync());
+
+            // Extract and return repository name, maybe create repository object as in bitbucket authentication
+            var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            return doc.RootElement.GetProperty("name").GetString();
         }
     }
 }

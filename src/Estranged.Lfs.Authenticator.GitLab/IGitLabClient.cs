@@ -5,7 +5,6 @@ namespace Estranged.Lfs.Authenticator.GitLab
 {
     internal interface IGitLabClient
     {
-        Task<string> GetRepository(string organisation, string repository, CancellationToken token);
-        Task<string> GetRepositoryPermissions(string organisation, string repository, CancellationToken token);
+        Task<string> GetRepository(string access_token, string repository, CancellationToken token);
     }
 }

@@ -5,7 +5,7 @@ namespace Estranged.Lfs.Authenticator.GitLab
     public interface IGitLabAuthenticatorConfig
     {
         Uri BaseAddress { get; }
-        string Organisation { get; }
+        string AccessToken { get; }
         string Repository { get; }
     }
 }

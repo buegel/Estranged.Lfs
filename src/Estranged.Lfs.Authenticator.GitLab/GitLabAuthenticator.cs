@@ -20,7 +20,7 @@ namespace Estranged.Lfs.Authenticator.GitLab
             var client = clientFactory.CreateClient(config.BaseAddress, username, password);
 
             // Check that the user can access the repository
-            await client.GetRepository(config.Organisation, config.Repository, token);
+            await client.GetRepository(config.AccessToken, config.Repository, token);
         }
     }
 }

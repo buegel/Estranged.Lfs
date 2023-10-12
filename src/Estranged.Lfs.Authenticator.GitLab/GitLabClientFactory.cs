@@ -10,7 +10,7 @@ namespace Estranged.Lfs.Authenticator.GitLab
         public IGitLabClient CreateClient(Uri baseAddress, string username, string password)
         {
             var client = new HttpClient { BaseAddress = baseAddress };
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
+
             return new GitLabClient(client);
         }
     }

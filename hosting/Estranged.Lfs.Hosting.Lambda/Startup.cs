@@ -25,7 +25,7 @@ namespace Estranged.Lfs.Hosting.Lambda
             const string LfsPasswordVariable = "LFS_PASSWORD";
             const string GitHubOrganisationVariable = "GITHUB_ORGANISATION";
             const string GitHubRepositoryVariable = "GITHUB_REPOSITORY";
-            const string GitLabOrganisationVariable = "GITLAB_ORGANISATION";
+            const string GitLabAccessTokenVariable = "GITLAB_ACCESSTOKEN";
             const string GitLabRepositoryVariable = "GITLAB_REPOSITORY";
             const string BitBucketWorkspaceVariable = "BITBUCKET_WORKSPACE";
             const string BitBucketRepositoryVariable = "BITBUCKET_REPOSITORY";
@@ -43,7 +43,7 @@ namespace Estranged.Lfs.Hosting.Lambda
             string lfsPassword = config[LfsPasswordVariable];
             string gitHubOrganisation = config[GitHubOrganisationVariable];
             string gitHubRepository = config[GitHubRepositoryVariable];
-            string gitLabOrganisation = config[GitLabOrganisationVariable];
+            string gitLabAccessToken = config[GitLabAccessTokenVariable];
             string gitLabRepository = config[GitLabRepositoryVariable];
             string bitBucketWorkspace = config[BitBucketWorkspaceVariable];
             string bitBucketRepository = config[BitBucketRepositoryVariable];
@@ -53,7 +53,7 @@ namespace Estranged.Lfs.Hosting.Lambda
             bool isAzureStorage = !string.IsNullOrWhiteSpace(lfsAzureStorageConnectionString);
             bool isDictionaryAuthentication = !string.IsNullOrWhiteSpace(lfsUsername) && !string.IsNullOrWhiteSpace(lfsPassword);
             bool isGitHubAuthentication = !string.IsNullOrWhiteSpace(gitHubOrganisation) && !string.IsNullOrWhiteSpace(gitHubRepository);
-            bool isGitLabAuthentication = !string.IsNullOrWhiteSpace(gitLabOrganisation) && !string.IsNullOrWhiteSpace(gitLabRepository);
+            bool isGitLabAuthentication = !string.IsNullOrWhiteSpace(gitLabAccessToken) && !string.IsNullOrWhiteSpace(gitLabRepository);
             bool isBitBucketAuthentication = !string.IsNullOrWhiteSpace(bitBucketWorkspace) && !string.IsNullOrWhiteSpace(bitBucketRepository);
 
             // If all authentication mechanims are set, or none are set throw an error
@@ -75,7 +75,7 @@ namespace Estranged.Lfs.Hosting.Lambda
 
             if (isGitLabAuthentication)
             {
-                services.AddLfsGitLabAuthenticator(new GitLabAuthenticatorConfig { Organisation = gitLabOrganisation, Repository = gitLabRepository });
+                services.AddLfsGitLabAuthenticator(new GitLabAuthenticatorConfig { AccessToken = gitLabAccessToken, Repository = gitLabRepository });
             }
 
             if (isBitBucketAuthentication)
